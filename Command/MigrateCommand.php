@@ -47,7 +47,7 @@ class MigrateCommand extends ContainerAwareCommand
             }
 
             $path = $dir . DIRECTORY_SEPARATOR . $migration . '.sql';
-            exec(sprintf('psql %s %s -f %s > /dev/null 2>&1', $name, $user, $path));
+            exec(sprintf('psql %s %s -f %s > /dev/null 2>&1 -1', $name, $user, $path));
 
             $db->exec("UPDATE schema SET version = '{$migration}'");
         }
