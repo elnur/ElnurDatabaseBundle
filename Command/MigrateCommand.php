@@ -38,6 +38,7 @@ class MigrateCommand extends ContainerAwareCommand
             $db->exec("INSERT INTO schema VALUES ('{$version}')");
         }
 
+        $db->beginTransaction();
 
         foreach ($migrations as $migration) {
             if ($migration <= $version) {
@@ -49,5 +50,7 @@ class MigrateCommand extends ContainerAwareCommand
             $db->exec(file_get_contents($path));
             $db->exec("UPDATE schema SET version = '{$migration}'");
         }
+
+        $db->commit();
     }
 }
