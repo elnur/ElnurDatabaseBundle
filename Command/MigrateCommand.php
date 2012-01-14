@@ -38,8 +38,6 @@ class MigrateCommand extends ContainerAwareCommand
             $db->exec("INSERT INTO schema VALUES ('{$version}')");
         }
 
-        $name = $db->getDatabase();
-        $user = $db->getUsername();
 
         foreach ($migrations as $migration) {
             if ($migration <= $version) {
@@ -47,8 +45,8 @@ class MigrateCommand extends ContainerAwareCommand
             }
 
             $path = $dir . DIRECTORY_SEPARATOR . $migration . '.sql';
-            exec(sprintf('psql %s %s -f %s > /dev/null 2>&1 -1', $name, $user, $path));
 
+            $db->exec(file_get_contents($path));
             $db->exec("UPDATE schema SET version = '{$migration}'");
         }
     }
