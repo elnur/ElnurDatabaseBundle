@@ -23,7 +23,32 @@ class MigrationService
 
     public function migrate()
     {
+        $this->initSchemaTable();
+
         $dir = $this->rootDir . '/../db/migrations';
+
+        $this->db->beginTransaction();
+
+        foreach ($this->findMigrations($dir) as $migration) {
+            if ($migration <= $this->getCurrentVersion()) {
+                continue;
+            }
+
+            $path = $dir . DIRECTORY_SEPARATOR . $migration . '.sql';
+
+            $this->db->exec(file_get_contents($path));
+            $this->db->exec("UPDATE schema SET version = '{$migration}'");
+        }
+
+        $this->db->commit();
+    }
+
+    /**
+     * @param  string $dir
+     * @return array
+     */
+    private function findMigrations($dir)
+    {
         $migrations = array_filter(scandir($dir), function($filename) {
             if (!preg_match('|^\d{12}\.sql$|', $filename)) {
                 return false;
@@ -36,31 +61,30 @@ class MigrationService
             $migrations[$key] = substr($value, 0, 12);
         });
 
+        return $migrations;
+    }
+
+    private function initSchemaTable()
+    {
         $this->db->exec(
             'CREATE TABLE IF NOT EXISTS schema(version char(12) PRIMARY KEY)'
         );
+    }
 
+    /**
+     * @return string
+     */
+    private function getCurrentVersion()
+    {
         $result = $this->db->query('SELECT version FROM schema');
         $version = $result->fetchColumn();
 
         if (!$version) {
             $version = '000000000000';
             $this->db->exec("INSERT INTO schema VALUES ('{$version}')");
+            return $version;
         }
 
-        $this->db->beginTransaction();
-
-        foreach ($migrations as $migration) {
-            if ($migration <= $version) {
-                continue;
-            }
-
-            $path = $dir . DIRECTORY_SEPARATOR . $migration . '.sql';
-
-            $this->db->exec(file_get_contents($path));
-            $this->db->exec("UPDATE schema SET version = '{$migration}'");
-        }
-
-        $this->db->commit();
+        return $version;
     }
 }
