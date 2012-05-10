@@ -103,7 +103,6 @@ class MigrationService
         if (!$version) {
             $version = '000000000000';
             $this->db->exec("INSERT INTO schema VALUES ('{$version}')");
-            return $version;
         }
 
         return $version;
