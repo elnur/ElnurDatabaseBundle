@@ -71,7 +71,7 @@ class MigrationService
     private function findMigrations($dir)
     {
         $migrations = array_filter(scandir($dir), function($filename) {
-            if (!preg_match('|^\d{12}\.sql$|', $filename)) {
+            if (!preg_match('|^\d+\.sql$|', $filename)) {
                 return false;
             }
 
@@ -79,7 +79,7 @@ class MigrationService
         });
 
         array_walk($migrations, function($value, $key) use(&$migrations) {
-            $migrations[$key] = substr($value, 0, 12);
+            $migrations[$key] = pathinfo($value, PATHINFO_FILENAME);
         });
 
         return $migrations;
@@ -88,7 +88,7 @@ class MigrationService
     private function initSchemaTable()
     {
         $this->db->exec(
-            'CREATE TABLE IF NOT EXISTS schema(version char(12) PRIMARY KEY)'
+            'CREATE TABLE IF NOT EXISTS schema(version varchar PRIMARY KEY)'
         );
     }
 
@@ -101,7 +101,7 @@ class MigrationService
         $version = $result->fetchColumn();
 
         if (!$version) {
-            $version = '000000000000';
+            $version = '0';
             $this->db->exec("INSERT INTO schema VALUES ('{$version}')");
         }
 
