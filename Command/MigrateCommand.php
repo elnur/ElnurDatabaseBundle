@@ -36,7 +36,7 @@ class MigrateCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $container = $this->getContainer();
-        $migrationService = $container->get('elnur.database.migration_service');
+        $migrationService = $container->get('elnur.database.migration_manager');
         $migrationService->migrate();
     }
 }
