@@ -32,7 +32,7 @@ THE SOFTWARE.
     <services>
         <service id="elnur_database.migration_manager" class="%elnur_database.migration_manager.class%">
             <argument type="service" id="database_connection"/>
-            <argument>%kernel.root_dir%/../db/migrations</argument>
+            <argument>%elnur_database.migrations_dir%</argument>
         </service>
     </services>
 </container>

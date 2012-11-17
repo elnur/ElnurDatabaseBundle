@@ -22,23 +22,27 @@
  */
 namespace Elnur\DatabaseBundle\DependencyInjection;
 
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
-use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 
-class ElnurDatabaseExtension extends Extension
+class Configuration implements ConfigurationInterface
 {
     /**
-     * @param array $config
-     * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
+     * @return \Symfony\Component\Config\Definition\Builder\TreeBuilder
      */
-    public function load(array $config, ContainerBuilder $container)
+    public function getConfigTreeBuilder()
     {
-        $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
-        $loader->load('services.xml');
+        $treeBuilder = new TreeBuilder;
+        $rootNode = $treeBuilder->root('elnur_database');
 
-        $config = $this->processConfiguration(new Configuration, $config);
-        $container->setParameter('elnur_database.migrations_dir', $config['migrations_dir']);
+        $rootNode
+            ->children()
+                ->scalarNode('migrations_dir')
+                    ->defaultValue('%kernel.root_dir%/../db/migrations')
+                ->end()
+            ->end()
+        ;
+
+        return $treeBuilder;
     }
 }
