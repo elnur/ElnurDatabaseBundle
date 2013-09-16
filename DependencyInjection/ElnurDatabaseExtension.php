@@ -31,7 +31,7 @@ class ElnurDatabaseExtension extends Extension
 {
     /**
      * @param array $config
-     * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
+     * @param ContainerBuilder $container
      */
     public function load(array $config, ContainerBuilder $container)
     {
