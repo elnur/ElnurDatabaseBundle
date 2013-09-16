@@ -18,7 +18,9 @@
         "elnur/database-migrations": "@dev"
     },
     "autoload": {
-        "psr-0": { "Elnur\\DatabaseBundle": "" }
+        "psr-0": {
+            "Elnur\\DatabaseBundle": ""
+        }
     },
     "target-dir": "Elnur/DatabaseBundle"
 }
