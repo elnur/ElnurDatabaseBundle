@@ -38,7 +38,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->scalarNode('migrations_dir')
-                    ->defaultValue('%kernel.root_dir%/../db/migrations')
+                    ->defaultValue('%kernel.root_dir%/db/migrations')
                 ->end()
             ->end()
         ;
